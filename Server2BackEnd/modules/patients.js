@@ -15,17 +15,17 @@ class Patients {
     this.userDB = new Database(false); // Use the default user
   }
 
-  async init() {
-    try {
-      await this.adminDB.connect(); // Ensure DB connection is established
-      await this.adminDB.ensureTableExists(); // Ensure table is created if it doesn't exist
-      await this.adminDB.close(); // Close the connection
-      await this.userDB.connect(); // Ensure DB connection is established
-      console.log('Patients class initialized successfully!');
-    } catch (err) {
-      console.error('Error during initialization:', err);
-    }
-  }
+  // async init() {
+  //   try {
+  //     await this.adminDB.connect(); // Ensure DB connection is established
+  //     await this.adminDB.ensureTableExists(); // Ensure table is created if it doesn't exist
+  //     await this.adminDB.close(); // Close the connection
+  //     await this.userDB.connect(); // Ensure DB connection is established
+  //     console.log('Patients class initialized successfully!');
+  //   } catch (err) {
+  //     console.error('Error during initialization:', err);
+  //   }
+  // }
 
   closeConnection() {
     this.userDB.close();
