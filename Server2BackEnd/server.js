@@ -10,13 +10,12 @@ class Server {
         const messages = JSON.parse(fs.readFileSync('./lang/en/messages.json'));
         this.notFound = messages.notFound;
         this.routes = [
-            {pathRegex: /^\/api\/patients\/?$/, action: this.patients.handleRequest}
+            { pathRegex: /^\/api\/patients\/?$/, action: this.patients.handleRequest.bind(this.patients) }
         ];
     }
 
     async start() {
         try {
-            // Ensure the Patients class is initialized before starting the server
             await this.patients.init();
             http.createServer((req, res) => {
                 const urlParts = url.parse(req.url);
@@ -29,7 +28,7 @@ class Server {
                 res.end(this.notFound);
             }).listen(8080);
             
-            console.log('Server listening...');
+            console.log('Server listening on port 8080...');
         } catch (err) {
             console.error('Error during server start:', err);
         }

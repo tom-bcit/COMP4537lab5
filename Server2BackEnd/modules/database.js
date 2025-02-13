@@ -1,39 +1,32 @@
-const mysql = require('mysql2');
-require('dotenv').config(); // Load environment variables
+const mysql = require('mysql2/promise');
+require('dotenv').config();
 
 class Database {
   constructor(isAdmin = false) {
-    this.connection = mysql.createConnection({
+    this.config = {
       host: process.env.DB_HOST,
       user: isAdmin ? process.env.DB_ADMIN_USER : process.env.DB_USER_USER,
       password: isAdmin ? process.env.DB_ADMIN_PASSWORD : process.env.DB_USER_PASSWORD,
       database: process.env.DB_DATABASE,
       port: process.env.DB_PORT
-    });
+    };
+    this.connection = null;
   }
 
   async connect() {
-    return new Promise((resolve, reject) => {
-      this.connection.connect((err) => {
-        if (err) {
-          console.error('Error connecting to MySQL:', err);
-          return reject(err);
-        }
-        console.log('Connected to MySQL as', this.connection.config.user);
-        resolve();
-      });
-    });
+    try {
+      this.connection = await mysql.createConnection(this.config);
+      console.log('Connected to MySQL as', this.connection.config.user);
+    } catch (err) {
+      console.error('Error connecting to MySQL:', err);
+      throw err;
+    }
   }
 
   async query(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.connection.query(sql, params, (err, results) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve(results);
-      });
-    });
+    if (!this.connection) throw new Error('Database not connected.');
+    const [results] = await this.connection.execute(sql, params);
+    return results;
   }
 
   async ensureTableExists() {
@@ -44,7 +37,6 @@ class Database {
         dateOfBirth DATE NOT NULL
       )
     `;
-
     try {
       await this.query(createTableQuery);
       console.log('Table "patients" checked/created successfully.');
@@ -54,15 +46,10 @@ class Database {
   }
 
   async close() {
-    return new Promise((resolve, reject) => {
-      this.connection.end((err) => {
-        if (err) {
-          return reject(err);
-        }
-        console.log('MySQL connection closed.');
-        resolve();
-      });
-    });
+    if (this.connection) {
+      await this.connection.end();
+      console.log('MySQL connection closed.');
+    }
   }
 }
 

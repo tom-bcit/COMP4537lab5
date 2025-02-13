@@ -8,38 +8,33 @@ class Patients {
     this.reqCount = 0;
     this.messages = JSON.parse(fs.readFileSync('./lang/en/messages.json'));
 
-    this.adminDB = new Database(true); // Pass `true` to use the admin user
-    this.userDB = new Database(false); // Use the default user
+    this.adminDB = new Database(true);
+    this.userDB = new Database(false);
   }
 
-  // Async method to initialize both admin and user DBs
   async init() {
     try {
-      // Wait for adminDB and userDB connections to be established
       await this.adminDB.connect();
       await this.adminDB.ensureTableExists();
       await this.adminDB.close();
       await this.userDB.connect();
-
       console.log('Patients class initialized successfully!');
     } catch (err) {
       console.error('Error during initialization:', err);
     }
   }
 
-  closeConnection() {
-    this.userDB.close();
+  async closeConnection() {
+    await this.userDB.close();
   }
 
-  handleRequest = async (req, res) => {
+  async handleRequest(req, res) {
     if (req.method === "GET")
       return this.handleGet(req, res);
     if (req.method === "POST")
       return this.handlePost(req, res);
-  };
+  }
 
-
-  // Handle GET requests
   async handleGet(req, res) {
     try {
       const urlParts = url.parse(req.url);
@@ -52,18 +47,15 @@ class Patients {
         return this.sendResponse(res, 404, JSON.stringify(response));
       }
 
-      await this.init(); // Ensure DB is initialized before executing query
-      response.result = await this.executeQuery(sqlQuery); // Ensure query is awaited 
-      this.closeConnection();
+      response.result = await this.executeQuery(sqlQuery);
+      await this.closeConnection();
       return this.sendResponse(res, 200, JSON.stringify(response));
     } catch (err) {
-      const response = {};
-      response.error = this.messages.serverError + err;
+      const response = { error: this.messages.serverError + err };
       return this.sendResponse(res, 500, JSON.stringify(response));
     }
   }
 
-  // Handle POST requests
   async handlePost(req, res) {
     try {
       const urlParts = url.parse(req.url);
@@ -76,13 +68,11 @@ class Patients {
         return this.sendResponse(res, 404, JSON.stringify(response));
       }
 
-      await this.init(); // Ensure DB is initialized before executing query
-      response.result = await this.executeQuery(sqlQuery); // Ensure query is awaited
-      this.closeConnection();
+      response.result = await this.executeQuery(sqlQuery);
+      await this.closeConnection();
       return this.sendResponse(res, 200, JSON.stringify(response));
     } catch (err) {
-      const response = {};
-      response.error = this.messages.serverError + err;
+      const response = { error: this.messages.serverError + err };
       return this.sendResponse(res, 500, JSON.stringify(response));
     }
   }
@@ -99,8 +89,7 @@ class Patients {
 
   async executeQuery(sqlQuery) {
     try {
-      const results = await this.userDB.query(sqlQuery);
-      return results;
+      return await this.userDB.query(sqlQuery);
     } catch (err) {
       console.error('Error executing query:', err);
       return err;
