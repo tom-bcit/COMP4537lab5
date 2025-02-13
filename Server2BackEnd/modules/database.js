@@ -4,7 +4,7 @@ require('dotenv').config(); // Load environment variables
 class Database {
   constructor(isAdmin = false) {
     this.connection = mysql.createConnection({
-      host: process.env.HOST,
+      host: 'db-mysql-sfo2-03273-do-user-18774309-0.f.db.ondigitalocean.com',
       user: isAdmin ? process.env.DB_ADMIN_USER : process.env.DB_USER_USER,
       password: isAdmin ? process.env.DB_ADMIN_PASSWORD : process.env.DB_USER_PASSWORD,
       database: process.env.DATABASE,
