@@ -46,9 +46,7 @@ class Database {
     `;
 
     try {
-      this.connect();
       await this.query(createTableQuery);
-      this.close();
       console.log('Table "patients" checked/created successfully.');
     } catch (err) {
       console.error('Error ensuring table exists:', err);
