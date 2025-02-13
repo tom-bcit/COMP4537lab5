@@ -98,12 +98,13 @@ class Patients {
   }
 
   async executeQuery(sqlQuery) {
-    // You can handle querying logic here, this can be an async method
-    for (let i = 0; i < this.dictionary.length; i++) {
-      if (this.dictionary[i].sqlQuery === sqlQuery)
-        return this.dictionary[i];
+    try {
+      const results = await this.userDB.query(sqlQuery);
+      return results;
+    } catch (err) {
+      console.error('Error executing query:', err);
+      return err;
     }
-    return null;
   }
 }
 
