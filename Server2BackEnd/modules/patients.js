@@ -61,19 +61,15 @@ class Patients {
 
   async handlePost(req, res) {
     try {
-      const urlParts = url.parse(req.url);
-      const params = new URLSearchParams(urlParts.query);
-      const sqlQuery = params.get('sqlQuery');
+      const { query } = req.body;
       const response = {};
-
-      if (sqlQuery === null) {
+      if (!query) {
         response.error = this.messages.missingSqlQuery;
         return this.sendResponse(res, 404, JSON.stringify(response));
       }
       await this.openConnection();
-      response.result = await this.executeQuery(sqlQuery);
+      response.result = await this.executeQuery(query);
       await this.closeConnection();
-      return this.sendResponse(res, 200, JSON.stringify(response));
     } catch (err) {
       const response = { error: this.messages.serverError + err };
       return this.sendResponse(res, 500, JSON.stringify(response));
