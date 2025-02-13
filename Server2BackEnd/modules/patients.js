@@ -3,6 +3,8 @@ const fs = require('fs')
 const Database = require('./database');
 
 class Patients {
+  adminDB;
+  userDB;
 
   constructor() {
     this.dictionary = []
