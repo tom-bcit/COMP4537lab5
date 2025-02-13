@@ -61,20 +61,38 @@ class Patients {
 
   async handlePost(req, res) {
     try {
-      const { query } = req.body;
-      const response = {};
-      if (!query) {
-        response.error = this.messages.missingSqlQuery;
-        return this.sendResponse(res, 404, JSON.stringify(response));
-      }
-      await this.openConnection();
-      response.result = await this.executeQuery(query);
-      await this.closeConnection();
+      let body = '';
+  
+      // Read the request body
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+  
+      req.on('end', async () => {
+        try {
+          // Parse JSON data
+          const parsedBody = JSON.parse(body);
+          const { query } = parsedBody;
+  
+          if (!query) {
+            return this.sendResponse(res, 400, JSON.stringify({ error: this.messages.missingSqlQuery }));
+          }
+  
+          // Open database connection, execute query, and return result
+          await this.openConnection();
+          const result = await this.executeQuery(query);
+          await this.closeConnection();
+  
+          return this.sendResponse(res, 200, JSON.stringify({ result }));
+        } catch (jsonError) {
+          return this.sendResponse(res, 400, JSON.stringify({ error: "Invalid JSON format" }));
+        }
+      });
     } catch (err) {
-      const response = { error: this.messages.serverError + err };
-      return this.sendResponse(res, 500, JSON.stringify(response));
+      return this.sendResponse(res, 500, JSON.stringify({ error: this.messages.serverError + err }));
     }
   }
+  
 
   sendResponse(res, status, message) {
     res.writeHead(status, {
