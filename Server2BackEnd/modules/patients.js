@@ -5,7 +5,6 @@ const Database = require('./database');
 class Patients {
 
   constructor() {
-    this.dictionary = [];
     this.reqCount = 0;
     this.messages = JSON.parse(fs.readFileSync('./lang/en/messages.json'));
 
@@ -32,12 +31,13 @@ class Patients {
     this.userDB.close();
   }
 
-  async handleRequest(req, res) {
+  handleRequest = async (req, res) => {
     if (req.method === "GET")
       return this.handleGet(req, res);
     if (req.method === "POST")
       return this.handlePost(req, res);
-  }
+  };
+
 
   // Handle GET requests
   async handleGet(req, res) {
@@ -53,7 +53,7 @@ class Patients {
       }
 
       await this.init(); // Ensure DB is initialized before executing query
-      response.result = await this.executeQuery(sqlQuery); // Ensure query is awaited
+      response.result = await this.executeQuery(sqlQuery); // Ensure query is awaited 
       this.closeConnection();
       return this.sendResponse(res, 200, JSON.stringify(response));
     } catch (err) {
