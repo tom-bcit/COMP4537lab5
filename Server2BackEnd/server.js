@@ -6,7 +6,7 @@ const Patients = require('./modules/patients')
 class Server {
 
     constructor() {
-        this.patients = new patients();
+        this.patients = new Patients();
         const messages = JSON.parse(fs.readFileSync('./lang/en/messages.json'))
         this.notFound = messages.notFound
         this.routes = [
