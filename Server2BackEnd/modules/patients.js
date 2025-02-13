@@ -1,5 +1,6 @@
 const url = require('url')
 const fs = require('fs')
+const Database = require('./database');
 
 class Patients {
 
