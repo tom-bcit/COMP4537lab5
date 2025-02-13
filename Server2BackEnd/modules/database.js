@@ -12,17 +12,20 @@ class Database {
     });
   }
 
-  connect() {
-    this.connection.connect(err => {
-      if (err) {
-        console.error('Error connecting to MySQL:', err);
-        return;
-      }
-      console.log('Connected to MySQL as', this.connection.config.user);
+  async connect() {
+    return new Promise((resolve, reject) => {
+      this.connection.connect((err) => {
+        if (err) {
+          console.error('Error connecting to MySQL:', err);
+          return reject(err);
+        }
+        console.log('Connected to MySQL as', this.connection.config.user);
+        resolve();
+      });
     });
   }
 
-  query(sql, params = []) {
+  async query(sql, params = []) {
     return new Promise((resolve, reject) => {
       this.connection.query(sql, params, (err, results) => {
         if (err) {
@@ -51,10 +54,10 @@ class Database {
       console.error('Error ensuring table exists:', err);
     }
   }
-  
-  close() {
+
+  async close() {
     return new Promise((resolve, reject) => {
-      this.connection.end(err => {
+      this.connection.end((err) => {
         if (err) {
           return reject(err);
         }
