@@ -1,0 +1,4 @@
+{
+  "missingSqlQuery": "GET requests must include as sql query",
+  "serverError": "Server error: "
+}
