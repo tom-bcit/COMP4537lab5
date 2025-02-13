@@ -17,11 +17,14 @@ class Patients {
       await this.adminDB.connect();
       await this.adminDB.ensureTableExists();
       await this.adminDB.close();
-      await this.userDB.connect();
       console.log('Patients class initialized successfully!');
     } catch (err) {
       console.error('Error during initialization:', err);
     }
+  }
+
+  async openConnection() {
+    await this.userDB.connect();
   }
 
   async closeConnection() {
@@ -46,7 +49,7 @@ class Patients {
         response.error = this.messages.missingSqlQuery;
         return this.sendResponse(res, 404, JSON.stringify(response));
       }
-
+      await this.openConnection();
       response.result = await this.executeQuery(sqlQuery);
       await this.closeConnection();
       return this.sendResponse(res, 200, JSON.stringify(response));
@@ -67,7 +70,7 @@ class Patients {
         response.error = this.messages.missingSqlQuery;
         return this.sendResponse(res, 404, JSON.stringify(response));
       }
-
+      await this.openConnection();
       response.result = await this.executeQuery(sqlQuery);
       await this.closeConnection();
       return this.sendResponse(res, 200, JSON.stringify(response));
