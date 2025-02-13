@@ -27,7 +27,7 @@ class Server {
                 }
                 res.writeHead(404, { 'content-type': 'text/html' });
                 res.end(this.notFound);
-            }).listen(8089);
+            }).listen(8080);
             
             console.log('Server listening...');
         } catch (err) {
