@@ -26,7 +26,6 @@ class DatabaseConnector {
   }
 
   async handleRead(query) {
-    // this.updateFeedback("GET: " + query, 'green');
     try {
       const endpoint = `https://clownfish-app-2i569.ondigitalocean.app/api/patients?sqlQuery=${encodeURI(query)}`;
       const response = await fetch(endpoint);
@@ -52,10 +51,7 @@ class DatabaseConnector {
   }
 
   async handleWrite(query) {
-    // this.ui.updateFeedback("POST: " + query, 'green');
     try {
-      // const endpoint = `https://clownfish-app-2i569.ondigitalocean.app/api/patients`;
-      // const response = await fetch(endpoint);
       const response = await fetch("https://clownfish-app-2i569.ondigitalocean.app/api/patients", {
         method: "POST",
         headers: {
@@ -73,7 +69,6 @@ class DatabaseConnector {
           return;
         }
         this.ui.updateFeedback(messages.successfulInsert, "green");
-        // this.ui.setResultsTable(result);
       } else {
         const error = result.message;
         this.ui.updateFeedback(`${messages.sqlError}\n${error}`, "red");
@@ -81,27 +76,6 @@ class DatabaseConnector {
     } catch (error) {
       this.ui.updateFeedback(messages.submitError, "red");
     }
-
-    // try {
-    //   let response = await fetch("https://whale-app-aoaek.ondigitalocean.app/comp4537lab4-server-2-back-end/api/definitions", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json"
-    //     },
-    //     body: JSON.stringify({ word, definition })
-    //   });
-
-    //   let result = await response.json();
-    //   if (response.ok) {
-    //     const requestNumber = result.requestNumber;
-    //     this.updateFeedback(`${messages.requestNumber}${requestNumber}\n${messages.feedbackSuccess}`, "green");
-    //     this.form.reset();
-    //   } else {
-    //     this.updateFeedback(messages.feedbackFailure, "red");
-    //   }
-    // } catch (error) {
-    //   this.updateFeedback(messages.feedbackFailure, "red");
-    // }
   }
 }
 
@@ -157,15 +131,11 @@ class Ui {
 
   createResultsTableRow(resultData) {
     const row = document.createElement('tr');
-    // const colvals = [messages.patientId, messages.patientName, messages.patientDateOfBirth];
     for (let colName in resultData) {
       const td = document.createElement('td');
       td.innerHTML = resultData[colName];
       row.appendChild(td);
     }
-    // colNames.forEach((colName) => {
-      
-    // })
     return row;
   }
 }
