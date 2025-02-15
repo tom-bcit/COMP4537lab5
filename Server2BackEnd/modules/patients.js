@@ -32,10 +32,25 @@ class Patients {
   }
 
   async handleRequest(req, res) {
-    if (req.method === "GET")
+    if (req.method === "OPTIONS") {
+      return this.handleOptions(res);
+    }
+    if (req.method === "GET") {
       return this.handleGet(req, res);
-    if (req.method === "POST")
+    }
+    if (req.method === "POST") {
       return this.handlePost(req, res);
+    }
+  }
+
+  handleOptions(res) {
+    res.writeHead(204, {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true'
+    });
+    res.end();
   }
 
   async handleGet(req, res) {
@@ -96,13 +111,16 @@ class Patients {
 
   sendResponse(res, status, message) {
     res.writeHead(status, {
-      'access-control-allow-methods': 'GET, POST',
       'Access-Control-Allow-Origin': '*',
-      'content-type': "application/json"
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true',
+      'Content-Type': "application/json"
     });
     res.write(message);
     res.end();
   }
+  
 
   async executeQuery(sqlQuery) {
     try {
