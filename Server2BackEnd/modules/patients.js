@@ -24,6 +24,7 @@ class Patients {
   }
 
   async openConnection() {
+    await this.init();
     await this.userDB.connect();
   }
 
@@ -32,7 +33,6 @@ class Patients {
   }
 
   async handleRequest(req, res) {
-    await init();
     if (req.method === "OPTIONS") {
       return this.handleOptions(res);
     }
