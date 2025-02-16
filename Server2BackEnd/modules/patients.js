@@ -24,6 +24,7 @@ class Patients {
   }
 
   async openConnection() {
+    await init();
     await this.userDB.connect();
   }
 

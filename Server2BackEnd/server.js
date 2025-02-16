@@ -16,7 +16,6 @@ class Server {
 
     async start() {
         try {
-            await this.patients.init();
             http.createServer((req, res) => {
                 const urlParts = url.parse(req.url);
                 for (let i = 0; i < this.routes.length; i++) {
